@@ -1,0 +1,32 @@
+p{
+                font-size: 14pt;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-weight: bold;
+                text-align: center;
+            }
+
+
+.h1{
+    color: green !important;
+    text-align: center;
+    background-color: aqua;
+}
+
+#frmRegister{
+    border-radius: 1px;
+    border: 1px solid black;
+    border-width: 5px;
+}
+
+#txtPhone{
+    border-radius:20px ;
+    border: 1px solid black;
+}
+
+.background{
+    background-color: magenta;
+}
+
+ #body {
+            background-color: #def324;
+        }
