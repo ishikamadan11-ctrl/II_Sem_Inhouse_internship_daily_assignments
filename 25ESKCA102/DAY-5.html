@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Directory | Dashboard</title>
+
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<!-- Google Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     ROOT VARIABLES — Light & Dark Theme Tokens
+  ============================================================ */
+  :root {
+    --bg-gradient-start: #eef2ff;
+    --bg-gradient-end: #f5f7fb;
+    --surface: #ffffff;
+    --surface-soft: #f7f8fc;
+    --text-primary: #1e2233;
+    --text-secondary: #6b7280;
+    --border-color: #e7e9f3;
+    --accent-1: #6366f1;
+    --accent-2: #8b5cf6;
+    --accent-3: #ec4899;
+    --shadow-color: rgba(99, 102, 241, 0.15);
+    --navbar-bg: rgba(255, 255, 255, 0.85);
+    --star-inactive: #c9cddb;
+    --star-active: #ffb703;
+    --highlight-bg: #fff3b0;
+    --highlight-text: #614700;
+  }
+
+  [data-theme="dark"] {
+    --bg-gradient-start: #0f1120;
+    --bg-gradient-end: #161a2e;
+    --surface: #1b1f36;
+    --surface-soft: #21263f;
+    --text-primary: #eef0fb;
+    --text-secondary: #a3a8c3;
+    --border-color: #2c3152;
+    --accent-1: #818cf8;
+    --accent-2: #a78bfa;
+    --accent-3: #f472b6;
+    --shadow-color: rgba(0, 0, 0, 0.45);
+    --navbar-bg: rgba(20, 23, 40, 0.85);
+    --star-inactive: #4a4f6e;
+    --star-active: #ffca3a;
+    --highlight-bg: #5b4a12;
+    --highlight-text: #ffe08a;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(160deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    color: var(--text-primary);
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* ============================================================
+     NAVBAR
+  ============================================================ */
+  .navbar-glass {
+    background: var(--navbar-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+    box-shadow: 0 6px 16px var(--shadow-color);
+  }
+
+  .brand-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-text span {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Theme toggle button */
+  #themeToggleBtn {
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--surface);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+  }
+  #themeToggleBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px var(--shadow-color);
+  }
+
+  /* ============================================================
+     HERO / HEADER SECTION
+  ============================================================ */
+  .hero-section {
+    padding: 3rem 0 1.5rem;
+    animation: fadeIn 0.8s ease;
+  }
+
+  .hero-title {
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -0.03em;
+  }
+
+  .hero-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+  }
+
+  .stats-pill {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 0.9rem 1.2rem;
+    box-shadow: 0 6px 20px var(--shadow-color);
+    transition: transform 0.25s ease, background 0.4s ease, border-color 0.4s ease;
+  }
+  .stats-pill:hover {
+    transform: translateY(-4px);
+  }
+  .stats-pill .num {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stats-pill .label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ============================================================
+     SEARCH & CONTROLS
+  ============================================================ */
+  .search-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1rem 1.2rem;
+    box-shadow: 0 8px 24px var(--shadow-color);
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  #searchInput {
+    border: none;
+    background: var(--surface-soft);
+    border-radius: 12px;
+    padding: 0.7rem 1rem 0.7rem 2.6rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+  #searchInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--shadow-color);
+  }
+
+  .search-icon-wrap {
+    position: relative;
+  }
+  .search-icon-wrap i {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+  }
+
+  #resetBtn {
+    border-radius: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ============================================================
+     STUDENT CARDS
+  ============================================================ */
+  #studentGrid {
+    padding-top: 1.8rem;
+    padding-bottom: 3rem;
+  }
+
+  .student-card {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s ease, border-color 0.4s ease;
+    animation: fadeIn 0.6s ease both;
+    cursor: pointer;
+    height: 100%;
+  }
+
+  .student-card:hover {
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 16px 34px var(--shadow-color);
+  }
+
+  .card-top-bar {
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+  }
+
+  .card-body-custom {
+    padding: 1.3rem 1.4rem 1.1rem;
+  }
+
+  .avatar-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px var(--shadow-color);
+    transition: transform 0.3s ease;
+  }
+
+  .student-card:hover .avatar-circle {
+    transform: scale(1.08) rotate(-3deg);
+  }
+
+  .student-name {
+    font-weight: 700;
+    font-size: 1.08rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .student-roll {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .fav-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--star-inactive);
+    transition: transform 0.25s ease, color 0.25s ease;
+    line-height: 1;
+    padding: 0.2rem 0.3rem;
+  }
+  .fav-btn:hover {
+    transform: scale(1.2);
+  }
+  .fav-btn.active {
+    color: var(--star-active);
+    animation: pop 0.35s ease;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.86rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed var(--border-color);
+  }
+  .info-row:last-child {
+    border-bottom: none;
+  }
+  .info-row .label {
+    color: var(--text-secondary);
+  }
+  .info-row .value {
+    font-weight: 600;
+  }
+
+  .badge-branch {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    border-radius: 50px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .badge-year {
+    background: var(--surface-soft);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 50px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .cgpa-tag {
+    font-weight: 800;
+    font-size: 1.15rem;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .expand-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    padding-top: 0.4rem;
+  }
+  .expand-hint i {
+    transition: transform 0.3s ease;
+  }
+  .student-card.expanded .expand-hint i {
+    transform: rotate(180deg);
+  }
+
+  /* Expandable details section (hidden by default, toggled via jQuery) */
+  .details-panel {
+    display: none;
+    background: var(--surface-soft);
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.4rem 1.2rem;
+    font-size: 0.86rem;
+  }
+
+  .details-panel .detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.55rem;
+  }
+  .details-panel .detail-item i {
+    color: var(--accent-1);
+    font-size: 1rem;
+    margin-top: 0.1rem;
+  }
+  .details-panel .detail-item .dlabel {
+    color: var(--text-secondary);
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .details-panel .detail-item .dvalue {
+    font-weight: 600;
+  }
+
+  .hobby-chip {
+    display: inline-block;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.74rem;
+    margin: 0.15rem 0.25rem 0.15rem 0;
+    font-weight: 500;
+  }
+
+  .attendance-bar-track {
+    background: var(--border-color);
+    border-radius: 50px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 0.3rem;
+  }
+  .attendance-bar-fill {
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+    transition: width 0.8s ease;
+  }
+
+  /* Highlighted search text */
+  mark.search-highlight {
+    background: var(--highlight-bg);
+    color: var(--highlight-text);
+    border-radius: 4px;
+    padding: 0 2px;
+  }
+
+  /* Empty state */
+  #emptyState {
+    display: none;
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: var(--text-secondary);
+    animation: fadeIn 0.5s ease;
+  }
+  #emptyState i {
+    font-size: 3rem;
+    color: var(--accent-1);
+    opacity: 0.5;
+  }
+
+  /* ============================================================
+     ANIMATIONS
+  ============================================================ */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
+
+  footer.app-footer {
+    text-align: center;
+    padding: 1.5rem 0 2rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 575.98px) {
+    .stats-pill { padding: 0.7rem 0.9rem; }
+    .hero-section { padding-top: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav class="navbar navbar-expand-lg navbar-glass py-3">
+  <div class="container">
+    <div class="d-flex align-items-center gap-2">
+      <div class="brand-logo"><i class="bi bi-mortarboard-fill"></i></div>
+      <div class="brand-text">Student<span>Hub</span></div>
+    </div>
+    <button id="themeToggleBtn" class="ms-auto">
+      <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+      <span id="themeLabel">Dark Mode</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO SECTION
+============================================================ -->
+<div class="container hero-section">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="hero-title">Student Directory Dashboard</h1>
+      <p class="hero-subtitle mb-0">Browse, search, and manage student profiles with ease. Click any card to view full details.</p>
+    </div>
+    <div class="col-lg-5">
+      <div class="row g-3">
+        <div class="col-4">
+          <div class="stats-pill text-center">
+            <div class="num" id="statTotal">0</div>
+            <div class="label">Total</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stats-pill text-center">
+            <div class="num" id="statFavs">0</div>
+            <div class="label">Favorites</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stats-pill text-center">
+            <div class="num" id="statAvgCgpa">0</div>
+            <div class="label">Avg CGPA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEARCH BAR
+============================================================ -->
+<div class="container">
+  <div class="search-wrap">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-9">
+        <div class="search-icon-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" id="searchInput" class="form-control" placeholder="Search by student name or roll number...">
+        </div>
+      </div>
+      <div class="col-md-3 d-grid">
+        <button id="resetBtn" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     STUDENT CARD GRID (populated dynamically via JS)
+============================================================ -->
+<div class="container">
+  <div class="row g-4" id="studentGrid"></div>
+
+  <div id="emptyState">
+    <i class="bi bi-emoji-frown"></i>
+    <h5 class="mt-3">No students found</h5>
+    <p>Try a different name or roll number.</p>
+  </div>
+</div>
+
+<footer class="app-footer">
+  Built with Bootstrap 5 &amp; jQuery &mdash; Student Directory Dashboard
+</footer>
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<!-- Bootstrap Bundle JS (Popper included) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* =====================================================================
+   STUDENT DIRECTORY APPLICATION
+   ---------------------------------------------------------------------
+   Sections:
+   1. Data          - sample student array
+   2. State         - favorites tracking
+   3. Rendering     - build cards dynamically from data
+   4. Search        - real-time filter + highlight
+   5. Interactions  - slideToggle, favorite button, reset
+   6. Theme         - light/dark mode with localStorage
+===================================================================== */
+
+$(function () {
+
+  /* =====================================================================
+     1. STUDENT DATA
+  ===================================================================== */
+  const students = [
+    {
+      id: 1,
+      name: "Ishika Madan",
+      roll: "102",
+      branch: "Artificial Intelligence",
+      year: "2nd Year",
+      cgpa: 9.36,
+      dob: "6 Mar 2006",
+      hobbies: ["Coding", "Painting", "Reading"],
+      attendance: 92
+    },
+    {
+      id: 2,
+      name: "Anukriti Sharma",
+      roll: "EC2102",
+      branch: "Electronics",
+      year: "3rd Year",
+      cgpa: 8.7,
+      dob: "22 Jul 2003",
+      hobbies: ["Painting", "Robotics"],
+      attendance: 88
+    },
+    {
+      id: 3,
+      name: "Bhavya Gupta",
+      roll: "ME2103",
+      branch: "Mechanical",
+      year: "1st Year",
+      cgpa: 7.9,
+      dob: "05 Jan 2005",
+      hobbies: ["Football", "Photography"],
+      attendance: 79
+    },
+    {
+      id: 4,
+      name: "Ishika Vijay",
+      roll: "CS2104",
+      branch: "Computer Science",
+      year: "4th Year",
+      cgpa: 9.5,
+      dob: "30 Sep 2002",
+      hobbies: ["Dancing", "Blogging", "Coding"],
+      attendance: 95
+    },
+    {
+      id: 5,
+      name: "Krinjal Rathore",
+      roll: "CE2105",
+      branch: "Civil Engineering",
+      year: "2nd Year",
+      cgpa: 7.4,
+      dob: "18 Nov 2004",
+      hobbies: ["Cricket", "Traveling"],
+      attendance: 81
+    },
+    {
+      id: 6,
+      name: "Aarchi Joshi",
+      roll: "EE2106",
+      branch: "Electrical",
+      year: "3rd Year",
+      cgpa: 8.9,
+      dob: "09 Feb 2003",
+      hobbies: ["Singing", "Reading", "Yoga"],
+      attendance: 90
+    },
+    {
+      id: 7,
+      name: "Aditya Agarwal",
+      roll: "IT2107",
+      branch: "Information Tech",
+      year: "1st Year",
+      cgpa: 8.1,
+      dob: "27 Jun 2005",
+      hobbies: ["Gaming", "Coding", "Music"],
+      attendance: 85
+    },
+    {
+      id: 8,
+      name: "Aanvi Dad",
+      roll: "CS2108",
+      branch: "Computer Science",
+      year: "2nd Year",
+      cgpa: 9.0,
+      dob: "11 Dec 2004",
+      hobbies: ["Writing", "Chess"],
+      attendance: 93
+    },
+    {
+      id: 9,
+      name: "Vasu Vijay",
+      roll: "ME2109",
+      branch: "Mechanical",
+      year: "4th Year",
+      cgpa: 7.6,
+      dob: "03 Apr 2002",
+      hobbies: ["Gym", "Cricket", "Traveling"],
+      attendance: 76
+    },
+    {
+      id: 10,
+      name: "Ananya Das",
+      roll: "EC2110",
+      branch: "Electronics",
+      year: "1st Year",
+      cgpa: 8.4,
+      dob: "19 Aug 2005",
+      hobbies: ["Sketching", "Photography", "Music"],
+      attendance: 89
+    }
+  ];
+
+  /* =====================================================================
+     2. STATE — favorites tracked in-memory (reset on page refresh)
+  ===================================================================== */
+  let favorites = new Set();
+  let currentSearchTerm = "";
+
+  /* Icon lookup for hobbies (falls back to a generic icon) */
+  const hobbyIcons = {
+    "Coding": "bi-code-slash",
+    "Chess": "bi-grid-3x3",
+    "Reading": "bi-book",
+    "Painting": "bi-palette",
+    "Robotics": "bi-cpu",
+    "Football": "bi-dribbble",
+    "Photography": "bi-camera",
+    "Dancing": "bi-music-note-beamed",
+    "Blogging": "bi-pencil-square",
+    "Cricket": "bi-circle",
+    "Traveling": "bi-airplane",
+    "Singing": "bi-mic",
+    "Yoga": "bi-person-arms-up",
+    "Gaming": "bi-controller",
+    "Music": "bi-music-note",
+    "Writing": "bi-pen",
+    "Gym": "bi-heart-pulse",
+    "Sketching": "bi-vector-pen"
+  };
+
+  /* =====================================================================
+     UTILITY — escape a string for safe HTML insertion
+  ===================================================================== */
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  /* =====================================================================
+     UTILITY — wrap matching substring(s) in <mark> for highlighting
+  ===================================================================== */
+  function highlightMatch(text, term) {
+    const safeText = escapeHtml(text);
+    if (!term) return safeText;
+    const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp("(" + escapedTerm + ")", "ig");
+    return safeText.replace(regex, "<mark class=\"search-highlight\">$1</mark>");
+  }
+
+  /* Generate initials for avatar circle */
+  function getInitials(name) {
+    return name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+  }
+
+  /* =====================================================================
+     3. RENDERING — build student cards dynamically
+  ===================================================================== */
+  function renderStudents(list, term) {
+    const $grid = $("#studentGrid");
+    $grid.empty();
+
+    if (list.length === 0) {
+      $("#emptyState").fadeIn(200);
+    } else {
+      $("#emptyState").hide();
+    }
+
+    list.forEach((student, index) => {
+      const isFav = favorites.has(student.id);
+      const nameHtml = highlightMatch(student.name, term);
+      const rollHtml = highlightMatch(student.roll, term);
+
+      const hobbiesHtml = student.hobbies.map(h => {
+        const icon = hobbyIcons[h] || "bi-star";
+        return `<span class="hobby-chip"><i class="bi ${icon} me-1"></i>${escapeHtml(h)}</span>`;
+      }).join("");
+
+      const cardHtml = `
+        <div class="col-sm-6 col-lg-4" style="animation-delay:${index * 0.05}s;">
+          <div class="student-card" data-id="${student.id}">
+            <div class="card-top-bar"></div>
+            <div class="card-body-custom">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="avatar-circle">${getInitials(student.name)}</div>
+                  <div>
+                    <div class="student-name">${nameHtml}</div>
+                    <div class="student-roll">${rollHtml}</div>
+                  </div>
+                </div>
+                <button class="fav-btn ${isFav ? "active" : ""}" data-id="${student.id}" title="Mark as favorite">
+                  <i class="bi ${isFav ? "bi-star-fill" : "bi-star"}"></i>
+                </button>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge-branch">${escapeHtml(student.branch)}</span>
+                <span class="badge-year">${escapeHtml(student.year)}</span>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-secondary" style="font-size:0.8rem;">CGPA</span>
+                <span class="cgpa-tag">${student.cgpa.toFixed(1)}</span>
+              </div>
+
+              <div class="expand-hint">
+                <i class="bi bi-chevron-down"></i> Click for details
+              </div>
+            </div>
+
+            <!-- Hidden expandable details panel (toggled via jQuery slideToggle) -->
+            <div class="details-panel">
+              <div class="detail-item">
+                <i class="bi bi-cake2"></i>
+                <div>
+                  <span class="dlabel">Date of Birth</span>
+                  <span class="dvalue">${escapeHtml(student.dob)}</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <i class="bi bi-heart"></i>
+                <div>
+                  <span class="dlabel">Hobbies</span>
+                  <div class="mt-1">${hobbiesHtml}</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <i class="bi bi-graph-up"></i>
+                <div style="width:100%;">
+                  <span class="dlabel">Attendance</span>
+                  <div class="d-flex justify-content-between">
+                    <span class="dvalue">${student.attendance}%</span>
+                  </div>
+                  <div class="attendance-bar-track">
+                    <div class="attendance-bar-fill" style="width:${student.attendance}%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      $grid.append(cardHtml);
+    });
+
+    updateStats(list);
+  }
+
+  /* =====================================================================
+     Update the top stats pills (Total / Favorites / Avg CGPA)
+  ===================================================================== */
+  function updateStats(list) {
+    $("#statTotal").text(students.length);
+    $("#statFavs").text(favorites.size);
+    const avg = students.reduce((sum, s) => sum + s.cgpa, 0) / students.length;
+    $("#statAvgCgpa").text(avg.toFixed(2));
+  }
+
+  /* =====================================================================
+     4. SEARCH — real-time filter by name or roll number
+  ===================================================================== */
+  function filterStudents(term) {
+    currentSearchTerm = term.trim();
+    if (!currentSearchTerm) {
+      renderStudents(students, "");
+      return;
+    }
+    const lowerTerm = currentSearchTerm.toLowerCase();
+    const filtered = students.filter(s =>
+      s.name.toLowerCase().includes(lowerTerm) ||
+      s.roll.toLowerCase().includes(lowerTerm)
+    );
+    renderStudents(filtered, currentSearchTerm);
+  }
+
+  $("#searchInput").on("input", function () {
+    filterStudents($(this).val());
+  });
+
+  /* =====================================================================
+     5. RESET BUTTON — clear search box & highlights, show all students
+  ===================================================================== */
+  $("#resetBtn").on("click", function () {
+    $("#searchInput").val("");
+    currentSearchTerm = "";
+    renderStudents(students, "");
+  });
+
+  /* =====================================================================
+     5b. CARD CLICK — expand/collapse details with slideToggle()
+     Only one card open at a time.
+  ===================================================================== */
+  $("#studentGrid").on("click", ".student-card", function (e) {
+    // Prevent the favorite button click from also triggering card expand
+    if ($(e.target).closest(".fav-btn").length) {
+      return;
+    }
+
+    const $card = $(this);
+    const $panel = $card.find(".details-panel");
+    const isOpen = $card.hasClass("expanded");
+
+    // Collapse any other open cards first
+    $(".student-card.expanded").not($card).each(function () {
+      $(this).removeClass("expanded");
+      $(this).find(".details-panel").slideUp(300);
+    });
+
+    // Toggle the clicked card
+    $panel.slideToggle(300);
+    $card.toggleClass("expanded", !isOpen);
+  });
+
+  /* =====================================================================
+     5c. FAVORITE BUTTON — toggle favorite state & star color
+  ===================================================================== */
+  $("#studentGrid").on("click", ".fav-btn", function (e) {
+    e.stopPropagation(); // don't trigger card expand
+    const id = parseInt($(this).data("id"), 10);
+    const $btn = $(this);
+    const $icon = $btn.find("i");
+
+    if (favorites.has(id)) {
+      favorites.delete(id);
+      $btn.removeClass("active");
+      $icon.removeClass("bi-star-fill").addClass("bi-star");
+    } else {
+      favorites.add(id);
+      $btn.addClass("active");
+      $icon.removeClass("bi-star").addClass("bi-star-fill");
+    }
+
+    $("#statFavs").text(favorites.size);
+  });
+
+  /* =====================================================================
+     6. THEME TOGGLE — light/dark mode saved to Local Storage
+  ===================================================================== */
+  function applyTheme(theme) {
+    $("html").attr("data-theme", theme);
+    if (theme === "dark") {
+      $("#themeIcon").removeClass("bi-moon-stars-fill").addClass("bi-sun-fill");
+      $("#themeLabel").text("Light Mode");
+    } else {
+      $("#themeIcon").removeClass("bi-sun-fill").addClass("bi-moon-stars-fill");
+      $("#themeLabel").text("Dark Mode");
+    }
+    localStorage.setItem("studentDirectoryTheme", theme);
+  }
+
+  $("#themeToggleBtn").on("click", function () {
+    const current = $("html").attr("data-theme") === "dark" ? "dark" : "light";
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
+
+  /* Load saved theme preference on startup (defaults to light) */
+  const savedTheme = localStorage.getItem("studentDirectoryTheme") || "light";
+  applyTheme(savedTheme);
+
+  /* =====================================================================
+     INITIAL RENDER
+  ===================================================================== */
+  renderStudents(students, "");
+
+});
+</script>
+
+</body>
+</html>
