@@ -60,12 +60,11 @@
         text-align: center;
     }
 
- 
+
     .card {
         min-height: 100%;
     }
-    /* Fixed: this was nested like SCSS (.employee-card { .card {...} } ), which
-       plain CSS does not support — the browser silently ignored the whole block. */
+
     .employee-card {
         width: 18rem;
         background-color: #216ebb;
@@ -82,8 +81,7 @@
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
-    /* These two classes were used in the HTML but never defined, so the team
-       photos and text had no styling at all. */
+
     .employee-img-top {
         width: 100%;
         height: 220px;
@@ -97,7 +95,7 @@
         padding: 1rem;
     }
 
-    /* The enquiry/contact form section referenced below */
+
     .contact-section {
         background-color: #0d2b45;
         color: #f2ecdd;
@@ -110,7 +108,7 @@
         padding: 2rem;
     }
 
-    /* Sticky navbar (bonus requirement) */
+
     .navbar-sticky {
         position: sticky;
         top: 0;
@@ -130,11 +128,7 @@
 
 
 
-    <!-- Corrections: logo.jpg didn't exist (would show a broken image icon), the
-         nav had a leftover "Flexdemo" link and a "Dropdown" link pointing to a local
-         Windows file path (only works on that one PC, on that one login). Both are
-         replaced with content relevant to the finished-home-selling site. Navbar is
-         now sticky (bonus requirement). -->
+
     <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-sticky">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="#">🏠 FinishedHomes</a>
@@ -186,9 +180,7 @@
                 aria-label="Slide 3"></button>
         </div>
         <div class="carousel-inner">
-            <!-- home1.jpg / home2.jpg / home3.jpg didn't exist, so every slide was
-                 blank except its blue background color. Swapped in real image URLs
-                 and captions relevant to finished-home selling. -->
+
             <div class="carousel-item active">
                 <img src="home1.jpg" class="d-block w-100 carousel-img" alt="Finished modern home exterior">
                 <div class="carousel-caption d-none d-md-block">
@@ -222,18 +214,18 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-    <!-- cards: images had no src ("...") or pointed to a file that didn't exist
-         (reading.png), and the copy was unrelated leftover placeholder text.
-         Replaced with working images and content about selling a finished home. -->
+
     <div class="container mt-5" id="features">
 
         <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
             <div class="col">
                 <div class="card h-100">
-                    <img src="https://picsum.photos/seed/valuation/300/200" class="card-img-top" alt="Free home valuation">
+                    <img src="https://picsum.photos/seed/valuation/300/200" class="card-img-top"
+                        alt="Free home valuation">
                     <div class="card-body">
                         <h5 class="card-title">Free Instant Valuation</h5>
-                        <p class="card-text">Get a data-backed price estimate for your finished home in minutes, based on
+                        <p class="card-text">Get a data-backed price estimate for your finished home in minutes, based
+                            on
                             recent sales in your neighborhood.</p>
                     </div>
                     <div class="card-footer">
@@ -246,7 +238,8 @@
                     <img src="https://picsum.photos/seed/buyers/300/200" class="card-img-top" alt="Verified buyers">
                     <div class="card-body">
                         <h5 class="card-title">Verified Buyers Only</h5>
-                        <p class="card-text">Every buyer is pre-qualified and proof-of-funds checked before they view your home.</p>
+                        <p class="card-text">Every buyer is pre-qualified and proof-of-funds checked before they view
+                            your home.</p>
                     </div>
                     <div class="card-footer">
                         <small class="text-body-secondary">Last updated 3 mins ago</small>
@@ -268,55 +261,54 @@
             </div>
         </div>
     </div>
-    <!-- employees: this section had no images and only generic "Card title" /
-         lorem-style text, so it didn't actually introduce anyone. Filled in with
-         real team images, names, and roles, plus a heading so the section makes
-         sense on the page. Also added a Meet the Team requirement was missing an
-         id to link to from the navbar. -->
+
     <div class="container mt-5" id="team">
         <h2 class="text-center mb-4">Meet the Team</h2>
         <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-          <div class="col d-flex justify-content-center">
-            <div class="employee-card h-100">
-              <img src="https://i.pravatar.cc/300?img=47" class="employee-img-top" alt="Ariana Cole, Listing Agent">
-              <div class="employee-body">
-                <h5 class="card-title">Ariana Cole</h5>
-                <p class="card-text">Listing Agent — 12 years turning finished homes into fast closings.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">ariana@finishedhomes.example</small>
-              </div>
+            <div class="col d-flex justify-content-center">
+                <div class="employee-card h-100">
+                    <img src="https://i.pravatar.cc/300?img=47" class="employee-img-top"
+                        alt="Ariana Cole, Listing Agent">
+                    <div class="employee-body">
+                        <h5 class="card-title">Ariana Cole</h5>
+                        <p class="card-text">Listing Agent — 12 years turning finished homes into fast closings.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">ariana@finishedhomes.example</small>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col d-flex justify-content-center">
-            <div class="employee-card h-100">
-              <img src="https://i.pravatar.cc/300?img=12" class="employee-img-top" alt="Devon Marsh, Buyer Relations">
-              <div class="employee-body">
-                <h5 class="card-title">Devon Marsh</h5>
-                <p class="card-text">Buyer Relations — matches pre-approved buyers to move-in-ready homes.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">devon@finishedhomes.example</small>
-              </div>
+            <div class="col d-flex justify-content-center">
+                <div class="employee-card h-100">
+                    <img src="https://i.pravatar.cc/300?img=12" class="employee-img-top"
+                        alt="Devon Marsh, Buyer Relations">
+                    <div class="employee-body">
+                        <h5 class="card-title">Devon Marsh</h5>
+                        <p class="card-text">Buyer Relations — matches pre-approved buyers to move-in-ready homes.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">devon@finishedhomes.example</small>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col d-flex justify-content-center">
-            <div class="employee-card h-100">
-              <img src="https://i.pravatar.cc/300?img=32" class="employee-img-top" alt="Priya Nathan, Closing Coordinator">
-              <div class="employee-body">
-                <h5 class="card-title">Priya Nathan</h5>
-                <p class="card-text">Closing Coordinator — keeps paperwork and deadlines on track to the day.</p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">priya@finishedhomes.example</small>
-              </div>
+            <div class="col d-flex justify-content-center">
+                <div class="employee-card h-100">
+                    <img src="https://i.pravatar.cc/300?img=32" class="employee-img-top"
+                        alt="Priya Nathan, Closing Coordinator">
+                    <div class="employee-body">
+                        <h5 class="card-title">Priya Nathan</h5>
+                        <p class="card-text">Closing Coordinator — keeps paperwork and deadlines on track to the day.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">priya@finishedhomes.example</small>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
     </div>
 
-    <!-- contact: this was completely missing from the original file, even though
-         the brief requires a "Contact Section" with a simple enquiry form. -->
+
     <div class="contact-section mt-5 py-5" id="contact">
         <div class="container">
             <h2 class="text-center mb-4">Get a Free Valuation</h2>
@@ -330,7 +322,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="you@email.com" required>
+                                <input type="email" class="form-control" id="email" placeholder="you@email.com"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label for="propAddress" class="form-label">Property Address</label>
@@ -338,9 +331,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="3" placeholder="Tell us about your home..."></textarea>
+                                <textarea class="form-control" id="message" rows="3"
+                                    placeholder="Tell us about your home..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-outline-success w-100">Request My Free Valuation</button>
+                            <button type="submit" class="btn btn-outline-success w-100">Request My Free
+                                Valuation</button>
                         </form>
                     </div>
                 </div>
