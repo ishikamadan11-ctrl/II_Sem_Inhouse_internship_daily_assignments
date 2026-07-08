@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fruit Counter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        header {
+            background-color: #9c8e47;
+            /* Light background */
+            border-bottom: 1px solid #d7cc55;
+            /* Subtle border */
+        }
+
+        footer {
+            background-color: #333;
+            /* Dark background */
+            color: #ecdfdf;
+            /* White text */
+            padding: 15px;
+            text-align: center;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .fruit-area {
+            position: relative;
+            width: 450px;
+            height: 320px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 2px dashed #666;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .fruit-area p {
+            margin: 0 0 10px;
+        }
+
+        .fruit-area img.fruit {
+            width: 100px;
+            position: absolute;
+            cursor: pointer;
+        }
+
+        .logo {
+            position: static;
+        }
+
+        .goal-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .goal-modal.show {
+            display: flex;
+        }
+
+        .goal-content {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+            animation: popIn 0.28s ease forwards;
+            max-width: 320px;
+            width: 90%;
+        }
+
+        .goal-content h2 {
+            margin: 0 0 10px;
+            color: #2f5f26;
+        }
+
+        .goal-content p {
+            margin: 0;
+            color: #555;
+        }
+
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 0.9rem;
+        }
+
+        .is-invalid+.invalid-feedback {
+            display: block;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.82);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="bg-light border-bottom">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-center align-items-center py-3 ">
+                <img src="fruitcounter.WEBP" alt="logo" width="80">
+                <nav>
+                    <ul class="nav">
+                        <li class="nav-item"><a href="index.php" class="nav-link text-dark">Home</a></li>
+                        <li class="nav-item"><a href="about.php" class="nav-link text-dark">About</a></li>
+                        <li class="nav-item"><a href="contact.php" class="nav-link text-dark">Contact</a></li>
+                    </ul>
+                </nav>
+                <button type="button" class="btn btn-primary ms-auto">Login</button>
+            </div>
+
+        </div>
+    </header>
+    <div class="fruit-area">
+        <p>Apple: <span id="apple">0</span></p>
+        <p>Banana: <span id="banana">0</span></p>
+        <img class="fruit" src="apple.webp" onclick="clickapple('apple',this)">
+        <img class="fruit" src="banana2.jpg" onclick="clickapple('banana',this)">
+    </div>
+
+    <div class="goal-modal" id="goalModal">
+        <div class="goal-content">
+            <h2>Goal reached!</h2>
+            <p id="goalMessage">You reached 12 fruits.</p>
+            <button type="button" class="btn btn-primary mt-3" onclick="closeGoalModal()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        let apple = 0, banana = 0;
+        const fruitArea = document.querySelector('.fruit-area');
+        const areaWidth = fruitArea.clientWidth;
+        const areaHeight = fruitArea.clientHeight;
+        const fruitSize = 100;
+        const goalModal = document.getElementById('goalModal');
+
+        function positionFruit(img) {
+            img.style.left = Math.random() * (areaWidth - fruitSize) + 'px';
+            img.style.top = Math.random() * (areaHeight - fruitSize) + 'px';
+        }
+
+        function showGoalModal(winner) {
+            document.getElementById('goalMessage').innerText = `${winner} reached 12! Resetting counts.`;
+            goalModal.classList.add('show');
+        }
+
+        function closeGoalModal() {
+            goalModal.classList.remove('show');
+        }
+
+        function resetCounts() {
+            apple = 0;
+            banana = 0;
+            document.getElementById('apple').innerText = apple;
+            document.getElementById('banana').innerText = banana;
+        }
+
+        function checkGoal() {
+            if (apple >= 12) {
+                showGoalModal('Apple');
+                resetCounts();
+            } else if (banana >= 12) {
+                showGoalModal('Banana');
+                resetCounts();
+            }
+        }
+
+        document.querySelectorAll('img.fruit').forEach(img => {
+            positionFruit(img);
+        });
+
+        function clickapple(type, img) {
+            if (type === 'apple') {
+                document.getElementById('apple').innerText = ++apple;
+            } else {
+                document.getElementById('banana').innerText = ++banana;
+            }
+
+            positionFruit(img);
+            checkGoal();
+        }
+
+        function validateRegistrationForm() {
+            const form = document.getElementById('registrationForm');
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmpassword');
+            let valid = true;
+
+            name.classList.remove('is-invalid');
+            email.classList.remove('is-invalid');
+            password.classList.remove('is-invalid');
+            confirmPassword.classList.remove('is-invalid');
+
+            if (!name.value.trim()) {
+                name.classList.add('is-invalid');
+                valid = false;
+            }
+
+            if (!email.value.trim() || !/^\S+@\S+\.\S+$/.test(email.value)) {
+                email.classList.add('is-invalid');
+                valid = false;
+            }
+
+            if (password.value.length < 8) {
+                password.classList.add('is-invalid');
+                valid = false;
+            }
+
+            if (confirmPassword.value !== password.value || !confirmPassword.value) {
+                confirmPassword.classList.add('is-invalid');
+                valid = false;
+            }
+
+            return valid;
+        }
+    </script>
+    <div class="container">
+        <h1>Registration</h1>
+        <form id="registrationForm" action="checkRegisterationError.php" method="POST"
+            onsubmit="return validateRegistrationForm()">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+                <div class="invalid-feedback">Please enter your name.</div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                <div class="invalid-feedback">Password must be at least 8 characters.</div>
+            </div>
+            <div class="mb-3">
+                <label for="confirmpassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" required>
+                <div class="invalid-feedback">Passwords do not match.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">&copy;2026 Fruits Counter. All rights reserved.</p>
+
+    </footer>
+</body>
+
+</html>
