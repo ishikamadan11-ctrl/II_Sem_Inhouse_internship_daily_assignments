@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Directory — User Directory Dashboard</title>
+  <meta name="description" content="A clean, searchable staff directory built with Bootstrap 5 and jQuery." />
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <!-- Fonts: Libre Franklin (display), IBM Plex Sans (body), IBM Plex Mono (data) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <style>
+
+:root {
+  /* ---- Palette (light) ---- */
+  --paper:        #FAFAF8;
+  --surface:       #FFFFFF;
+  --ink:          #1B1F2A;
+  --ink-soft:      #565C6B;
+  --line:         #E6E3DC;
+  --line-soft:     #EFEDE7;
+  --signal:       #3E5FDD;
+  --signal-ink:    #2E48B0;
+  --amber:        #EFA93B;
+  --danger:       #C4433C;
+  --success:      #2F8F5B;
+
+  /* ---- Type ---- */
+  --font-display: 'Libre Franklin', sans-serif;
+  --font-body:    'IBM Plex Sans', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(.22, .61, .36, 1);
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --paper:        #12151C;
+  --surface:       #1B1F2A;
+  --ink:          #EDEEF2;
+  --ink-soft:      #A2A8B8;
+  --line:         #2B303F;
+  --line-soft:     #232838;
+  --signal:       #6C8CFF;
+  --signal-ink:    #A9BBFF;
+  --amber:        #F2BB63;
+  color-scheme: dark;
+}
+
+/* Company stripe palette — cycled deterministically by company name */
+:root {
+  --tag-0: #3E5FDD; /* signal blue */
+  --tag-1: #EFA93B; /* amber */
+  --tag-2: #2F8F5B; /* forest */
+  --tag-3: #A24E9E; /* plum */
+  --tag-4: #C4433C; /* brick */
+  --tag-5: #1B8C8C; /* teal */
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  line-height: 1.55;
+  transition: background-color .35s var(--ease), color .35s var(--ease);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+a { color: var(--signal); }
+
+::selection { background: var(--signal); color: #fff; }
+
+
+
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  transition: background-color .35s var(--ease), border-color .35s var(--ease);
+}
+
+.navbar { padding: .85rem 0; }
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--ink) !important;
+  letter-spacing: -0.01em;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--signal);
+  color: #fff;
+  font-size: 1.05rem;
+  font-family: var(--font-mono);
+}
+
+.user-count-badge {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  color: var(--ink-soft);
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .38rem .8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  white-space: nowrap;
+}
+
+.btn-outline-refresh,
+.btn-theme-toggle {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .82rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: .42rem .85rem;
+  transition: all .2s var(--ease);
+}
+
+.btn-outline-refresh:hover,
+.btn-theme-toggle:hover {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-outline-refresh:active,
+.btn-theme-toggle:active { transform: translateY(0); }
+
+
+
+.hero-strip {
+  padding: 2.6rem 0 1.6rem;
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 1.4rem;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .72rem;
+  color: var(--signal);
+  margin-bottom: .35rem;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  letter-spacing: -0.02em;
+  margin-bottom: .4rem;
+}
+
+.hero-sub {
+  color: var(--ink-soft);
+  max-width: 46ch;
+  margin-bottom: 0;
+}
+
+
+.controls-bar { margin-bottom: 1.6rem; }
+
+.search-wrap {
+  position: relative;
+  height: 100%;
+}
+
+.search-wrap i {
+  position: absolute;
+  left: .9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+
+.search-input,
+.control-select {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 10px;
+  height: 46px;
+  font-family: var(--font-body);
+  font-size: .92rem;
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background-color .35s var(--ease), color .35s var(--ease);
+}
+
+.search-input { padding-left: 2.5rem; }
+
+.search-input:focus,
+.control-select:focus {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 22%, transparent);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.control-select { padding-right: 2rem; }
+
+
+
+.state-block { color: var(--ink-soft); }
+
+.directory-spinner {
+  color: var(--signal);
+  width: 2.6rem;
+  height: 2.6rem;
+  border-width: 3px;
+}
+
+.state-message { color: var(--ink-soft); }
+
+.error-alert {
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--line));
+  border-radius: 12px;
+  color: var(--ink);
+  padding: 1.1rem 1.3rem;
+}
+
+.error-icon { color: var(--danger); font-size: 1.6rem; margin-top: .1rem; }
+.error-detail { color: var(--ink-soft); }
+
+.btn-retry {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: .82rem;
+  padding: .45rem .95rem;
+  transition: all .2s var(--ease);
+}
+.btn-retry:hover { background: var(--signal); color: #fff; transform: translateY(-1px); }
+
+.empty-illustration {
+  font-size: 3rem;
+  color: var(--line);
+  line-height: 1;
+}
+
+
+
+.user-card-col {
+  animation: cardFadeIn .45s var(--ease) both;
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.user-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.4rem 1.3rem 1.2rem;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease), background-color .35s var(--ease);
+  cursor: default;
+}
+
+.user-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 5px;
+  height: 100%;
+  background: var(--tag-color, var(--signal));
+}
+
+.user-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 34px -18px rgba(20, 22, 30, .28);
+  border-color: color-mix(in srgb, var(--tag-color, var(--signal)) 40%, var(--line));
+}
+
+.card-top-row {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin-bottom: .95rem;
+}
+
+.avatar-ring {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--tag-color, var(--signal)), transparent 65%);
+  flex-shrink: 0;
+}
+
+.avatar-ring img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--surface);
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.card-username {
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  color: var(--tag-color, var(--signal));
+  margin: 0;
+}
+
+.card-field {
+  display: flex;
+  align-items: baseline;
+  gap: .45rem;
+  font-size: .82rem;
+  color: var(--ink-soft);
+  margin-bottom: .3rem;
+  overflow: hidden;
+}
+
+.card-field i { color: var(--ink-soft); font-size: .78rem; flex-shrink: 0; }
+
+.card-field span {
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-company-chip {
+  display: inline-block;
+  margin-top: .5rem;
+  margin-bottom: .95rem;
+  padding: .22rem .6rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--tag-color, var(--signal)) 14%, transparent);
+  color: var(--tag-color, var(--signal));
+}
+
+.btn-view-details {
+  width: 100%;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 8px;
+  padding: .55rem 0;
+  font-weight: 600;
+  font-size: .84rem;
+  transition: all .2s var(--ease);
+}
+
+.btn-view-details:hover {
+  background: var(--tag-color, var(--signal));
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+
+
+.dossier-card {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--line);
+  padding: 1.1rem 1.4rem;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.modal-body { padding: 1.5rem 1.4rem; }
+
+.dossier-head {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-bottom: 1.4rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px dashed var(--line);
+}
+
+.dossier-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 0 2px var(--dossier-tag, var(--signal));
+}
+
+.dossier-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.dossier-username {
+  font-family: var(--font-mono);
+  color: var(--dossier-tag, var(--signal));
+  font-size: .85rem;
+}
+
+.dossier-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem 1.6rem;
+}
+
+@media (max-width: 575.98px) {
+  .dossier-grid { grid-template-columns: 1fr; }
+}
+
+.dossier-field-label {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink-soft);
+  margin-bottom: .2rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.dossier-field-value {
+  font-family: var(--font-mono);
+  font-size: .9rem;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.dossier-field-value a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.dossier-field-value a:hover { color: var(--dossier-tag, var(--signal)); }
+
+.dossier-full { grid-column: 1 / -1; }
+
+
+.modal.fade .modal-dialog {
+  transform: translateY(24px) scale(.97);
+}
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+
+
+.app-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.2rem 0;
+  font-size: .8rem;
+  color: var(--ink-soft);
+  margin-top: 2rem;
+}
+
+.footer-note { font-family: var(--font-mono); font-size: .74rem; }
+
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.btn-close { filter: var(--btn-close-filter, none); }
+[data-theme="dark"] .btn-close { filter: invert(1) grayscale(1); }
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER / NAVBAR  -->
+  <header class="app-header">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid px-3 px-md-4">
+        <a class="navbar-brand" href="#top">
+          <span class="brand-mark" aria-hidden="true">⌗</span>
+          <span class="brand-text">The Directory</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navContent">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 py-2 py-lg-0">
+            <li class="nav-item">
+              <span id="userCountBadge" class="user-count-badge">
+                <i class="bi bi-people-fill"></i> Showing 0 Users
+              </span>
+            </li>
+            <li class="nav-item">
+              <button id="refreshBtn" class="btn btn-outline-refresh btn-sm" type="button" title="Re-fetch users">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+              </button>
+            </li>
+            <li class="nav-item">
+              <button id="themeToggle" class="btn btn-theme-toggle btn-sm" type="button" title="Toggle dark / light mode" aria-pressed="false">
+                <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                <span id="themeLabel">Dark</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top" class="container-fluid px-3 px-md-4">
+
+    <!-- INTRO / HERO STRIP  -->
+    <section class="hero-strip">
+      <div>
+        <p class="hero-eyebrow">Staff Records &middot; Live Roster</p>
+        <h1 class="hero-title">Find anyone. Fast.</h1>
+        <p class="hero-sub">Search, sort, and filter the full roster — every record pulled live from the directory API.</p>
+      </div>
+    </section>
+
+    <!--  CONTROLS BAR  -->
+    <section class="controls-bar" aria-label="Directory controls">
+      <div class="row g-2 align-items-stretch">
+        <div class="col-12 col-lg-4">
+          <label for="searchInput" class="visually-hidden">Search by name</label>
+          <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" class="form-control search-input" placeholder="Search by name…" autocomplete="off">
+          </div>
+        </div>
+        <div class="col-6 col-lg-4">
+          <label for="sortSelect" class="visually-hidden">Sort</label>
+          <select id="sortSelect" class="form-select control-select">
+            <option value="default">Sort: Default order</option>
+            <option value="asc">Sort: Name A → Z</option>
+            <option value="desc">Sort: Name Z → A</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-4">
+          <label for="companySelect" class="visually-hidden">Filter by company</label>
+          <select id="companySelect" class="form-select control-select">
+            <option value="all">All companies</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!--LOADING STATE-->
+    <div id="loadingState" class="state-block text-center py-5">
+      <div class="spinner-border directory-spinner" role="status">
+        <span class="visually-hidden">Loading…</span>
+      </div>
+      <p class="state-message mt-3">Loading Users…</p>
+    </div>
+
+    <!--ERROR STATE -->
+    <div id="errorState" class="state-block d-none">
+      <div class="alert error-alert d-flex align-items-start gap-3" role="alert">
+        <i class="bi bi-exclamation-octagon-fill error-icon"></i>
+        <div class="flex-grow-1">
+          <h5 class="mb-1">Couldn't load the directory</h5>
+          <p class="mb-3 error-detail">The API didn't respond. Check your connection and try again.</p>
+          <button id="retryBtn" class="btn btn-retry btn-sm">
+            <i class="bi bi-arrow-repeat"></i> Retry
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="emptyState" class="state-block text-center py-5 d-none">
+      <div class="empty-illustration" aria-hidden="true">
+        <i class="bi bi-person-x"></i>
+      </div>
+      <h5 class="mt-3 mb-1">No one matches that</h5>
+      <p class="state-message">Try a different name, or clear your filters.</p>
+      <button id="clearFiltersBtn" class="btn btn-retry btn-sm mt-2">
+        <i class="bi bi-x-circle"></i> Clear filters
+      </button>
+    </div>
+
+    <!--  USER CARDS GRID -->
+    <section class="row g-3 g-lg-4 pb-5" id="userGrid" aria-live="polite"></section>
+
+  </main>
+
+  <!--  FOOTER  -->
+  <footer class="app-footer">
+    <div class="container-fluid px-3 px-md-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <span>&copy; 2026 The Directory. Records via JSONPlaceholder.</span>
+      <span class="footer-note">Built with Bootstrap 5 &amp; jQuery — no frameworks, no build step.</span>
+    </div>
+  </footer>
+
+  <!-- = USER DETAILS MODAL -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content dossier-card">
+        <div class="modal-header">
+          <h5 class="modal-title" id="userModalLabel">Record</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="userModalBody">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Bootstrap 5 JS bundle-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom script -->
+  <script>
+
+
+(function () {
+  "use strict";
+
+  
+  const API_URL = "https://jsonplaceholder.typicode.com/users";
+  const AVATAR_URL = (id) => `https://i.pravatar.cc/150?img=${id}`;
+  const TAG_COLORS = ["var(--tag-0)", "var(--tag-1)", "var(--tag-2)", "var(--tag-3)", "var(--tag-4)", "var(--tag-5)"];
+
+  
+  let allUsers = [];      
+  let searchTerm = "";
+  let sortOrder = "default";
+  let companyFilter = "all";
+
+  
+  const $grid = $("#userGrid");
+  const $loading = $("#loadingState");
+  const $error = $("#errorState");
+  const $empty = $("#emptyState");
+  const $countBadge = $("#userCountBadge");
+  const $companySelect = $("#companySelect");
+
+ 
+  function colorForCompany(companyName) {
+    let hash = 0;
+    for (let i = 0; i < companyName.length; i++) {
+      hash = (hash << 5) - hash + companyName.charCodeAt(i);
+      hash |= 0;
+    }
+    const index = Math.abs(hash) % TAG_COLORS.length;
+    return TAG_COLORS[index];
+  }
+
+ 
+  
+  function escapeHtml(str) {
+    return $("<div>").text(str == null ? "" : str).html();
+  }
+
+ 
+  
+  async function fetchUsers() {
+    showLoading();
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      allUsers = data;
+      populateCompanyFilter(allUsers);
+      hideLoading();
+      applyAndRender();
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+      hideLoading();
+      showError();
+    }
+  }
+
+ 
+  function renderUsers(users) {
+    $grid.empty();
+
+    if (users.length === 0) {
+      $grid.hide();
+      $empty.removeClass("d-none");
+      $error.addClass("d-none");
+      updateCountBadge(0);
+      return;
+    }
+
+    $empty.addClass("d-none");
+    $error.addClass("d-none");
+    $grid.show();
+
+    const cardsHtml = users.map((user, i) => buildCardHtml(user, i)).join("");
+    $grid.html(cardsHtml);
+
+    updateCountBadge(users.length);
+  }
+
+  function buildCardHtml(user, index) {
+    const tagColor = colorForCompany(user.company.name);
+    const initialsAvatar = AVATAR_URL(user.id);
+
+    return `
+      <div class="col-12 col-sm-6 col-lg-3 user-card-col" style="animation-delay:${Math.min(index * 45, 400)}ms">
+        <div class="user-card" style="--tag-color:${tagColor}" data-user-id="${user.id}">
+          <div class="card-top-row">
+            <span class="avatar-ring">
+              <img src="${initialsAvatar}" alt="Profile photo of ${escapeHtml(user.name)}" loading="lazy">
+            </span>
+            <div class="min-w-0">
+              <p class="card-name">${escapeHtml(user.name)}</p>
+              <p class="card-username">@${escapeHtml(user.username)}</p>
+            </div>
+          </div>
+
+          <div class="card-field">
+            <i class="bi bi-envelope"></i>
+            <span title="${escapeHtml(user.email)}">${escapeHtml(user.email)}</span>
+          </div>
+
+          <span class="card-company-chip">
+            <i class="bi bi-building"></i> ${escapeHtml(user.company.name)}
+          </span>
+
+          <button type="button" class="btn btn-view-details" data-user-id="${user.id}">
+            View Details
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function updateCountBadge(count) {
+    $countBadge.html(`<i class="bi bi-people-fill"></i> Showing ${count} User${count === 1 ? "" : "s"}`);
+  }
+
+
+  function populateCompanyFilter(users) {
+    const companies = [...new Set(users.map((u) => u.company.name))].sort();
+    const options = companies
+      .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+      .join("");
+    $companySelect.html(`<option value="all">All companies</option>${options}`);
+  }
+
+  
+  function searchUsers(users, term) {
+    if (!term) return users;
+    const needle = term.trim().toLowerCase();
+    return users.filter((u) => u.name.toLowerCase().includes(needle));
+  }
+
+  function sortUsers(users, order) {
+    if (order === "default") return users;
+    const sorted = [...users].sort((a, b) => a.name.localeCompare(b.name));
+    return order === "desc" ? sorted.reverse() : sorted;
+  }
+
+  function filterUsersByCompany(users, company) {
+    if (company === "all") return users;
+    return users.filter((u) => u.company.name === company);
+  }
+
+
+  function applyAndRender() {
+    let result = allUsers;
+    result = filterUsersByCompany(result, companyFilter);
+    result = searchUsers(result, searchTerm);
+    result = sortUsers(result, sortOrder);
+    renderUsers(result);
+  }
+
+ 
+  function showUserModal(userId) {
+    const user = allUsers.find((u) => u.id === userId);
+    if (!user) return;
+
+    const tagColor = colorForCompany(user.company.name);
+    const { address, company } = user;
+
+    const bodyHtml = `
+      <div class="dossier-head" style="--dossier-tag:${tagColor}">
+        <img class="dossier-avatar" src="${AVATAR_URL(user.id)}" alt="Profile photo of ${escapeHtml(user.name)}">
+        <div>
+          <p class="dossier-name">${escapeHtml(user.name)}</p>
+          <p class="dossier-username">@${escapeHtml(user.username)}</p>
+        </div>
+      </div>
+
+      <div class="dossier-grid">
+        <div>
+          <div class="dossier-field-label">Email</div>
+          <div class="dossier-field-value"><a href="mailto:${escapeHtml(user.email)}">${escapeHtml(user.email)}</a></div>
+        </div>
+        <div>
+          <div class="dossier-field-label">Phone</div>
+          <div class="dossier-field-value">${escapeHtml(user.phone)}</div>
+        </div>
+
+        <div>
+          <div class="dossier-field-label">Website</div>
+          <div class="dossier-field-value"><a href="http://${escapeHtml(user.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(user.website)}</a></div>
+        </div>
+        <div>
+          <div class="dossier-field-label">Company</div>
+          <div class="dossier-field-value">${escapeHtml(company.name)}</div>
+        </div>
+
+        <div class="dossier-full">
+          <div class="dossier-field-label">Company Motto</div>
+          <div class="dossier-field-value">"${escapeHtml(company.catchPhrase)}"</div>
+        </div>
+
+        <div class="dossier-full">
+          <div class="dossier-field-label">Full Address</div>
+          <div class="dossier-field-value">${escapeHtml(address.suite)}, ${escapeHtml(address.street)}, ${escapeHtml(address.city)}</div>
+        </div>
+
+        <div>
+          <div class="dossier-field-label">City</div>
+          <div class="dossier-field-value">${escapeHtml(address.city)}</div>
+        </div>
+        <div>
+          <div class="dossier-field-label">Zip Code</div>
+          <div class="dossier-field-value">${escapeHtml(address.zipcode)}</div>
+        </div>
+
+        <div class="dossier-full">
+          <div class="dossier-field-label">Geo Coordinates</div>
+          <div class="dossier-field-value">lat ${escapeHtml(address.geo.lat)}, lng ${escapeHtml(address.geo.lng)}</div>
+        </div>
+      </div>
+    `;
+
+    $("#userModalLabel").text(`Record — ${user.name}`);
+    $("#userModalBody").html(bodyHtml);
+
+    const modalEl = document.getElementById("userModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+  }
+
+ 
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute("data-theme") || "light";
+    const next = current === "light" ? "dark" : "light";
+    applyTheme(next);
+    localStorage.setItem("directory-theme", next);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    const isDark = theme === "dark";
+    $("#themeIcon").attr("class", isDark ? "bi bi-sun-fill" : "bi bi-moon-stars-fill");
+    $("#themeLabel").text(isDark ? "Light" : "Dark");
+    $("#themeToggle").attr("aria-pressed", String(isDark));
+  }
+
+  function restoreTheme() {
+    const saved = localStorage.getItem("directory-theme");
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(saved || (prefersDark ? "dark" : "light"));
+  }
+
+  
+  function showLoading() {
+    $loading.removeClass("d-none");
+    $error.addClass("d-none");
+    $empty.addClass("d-none");
+    $grid.hide().empty();
+  }
+
+  function hideLoading() {
+    $loading.addClass("d-none");
+  }
+
+  function showError() {
+    $error.removeClass("d-none");
+    $empty.addClass("d-none");
+    $grid.hide();
+    updateCountBadge(0);
+  }
+
+
+  $(function () {
+    restoreTheme();
+    fetchUsers();
+
+    // Real-time search
+    $("#searchInput").on("input", function () {
+      searchTerm = $(this).val();
+      applyAndRender();
+    });
+
+    // Sort
+    $("#sortSelect").on("change", function () {
+      sortOrder = $(this).val();
+      applyAndRender();
+    });
+
+    // Company filter
+    $companySelect.on("change", function () {
+      companyFilter = $(this).val();
+      applyAndRender();
+    });
+
+    // Clear filters 
+    $("#clearFiltersBtn").on("click", function () {
+      searchTerm = "";
+      sortOrder = "default";
+      companyFilter = "all";
+      $("#searchInput").val("");
+      $("#sortSelect").val("default");
+      $companySelect.val("all");
+      applyAndRender();
+    });
+
+    
+    $grid.on("click", ".btn-view-details", function () {
+      const id = parseInt($(this).data("user-id"), 10);
+      showUserModal(id);
+    });
+
+    // Refresh
+    $("#refreshBtn").on("click", fetchUsers);
+
+    // Retry (from error state)
+    $("#retryBtn").on("click", fetchUsers);
+
+    // Theme toggle
+    $("#themeToggle").on("click", toggleTheme);
+  });
+})();
+
+  </script>
+</body>
+</html>
